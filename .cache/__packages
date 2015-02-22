@@ -3,3 +3,5 @@ devtools
 slidify
 googleVis
 ggplot2
+bitops
+RCurl

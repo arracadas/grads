@@ -39,7 +39,7 @@ y1$CountryName <- factor(y1$CountryName)
 ```
 
 
-```{r, gv, results="asis"}
+```{r, gv, echo=FALSE, results="asis"}
 suppressPackageStartupMessages(library(googleVis))
 yp <- gvisMotionChart(y1
                       ,"CountryName"
