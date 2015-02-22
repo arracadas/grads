@@ -1,0 +1,91 @@
+---
+title       : Young Graduates Shape Our Future
+subtitle    : Data Products
+author      : Coursera student
+job         : Data Analyst
+logo        : graduate_hat.png
+framework   : io2012   # {io2012, html5slides, shower, dzslides, ...}
+highlighter : highlight.js  # {highlight.js, prettify, highlight}
+hitheme     : tomorrow      # 
+url:
+    lib: ./libraries
+    assets: ./assets
+widgets     : [mathjax]            # {mathjax, quiz, bootstrap}
+mode        : selfcontained # {standalone, draft}
+knit        : slidify::knit2slides
+---
+
+## Overview of Graduates by Country
+
+* This shiny app offers a view into the number of graduates by field of study and compared to the number of Young Adults (ages 20 - 40) in each country.
+* The goal is to show what countries have been successful in implementing policies that increase the number of graduates in higher education (tertiary level).  The application also shows what are the most demanded fields of study in each country.
+* You can access the application here http://arracadas.shinyapps.io/project/
+* The R documentation is available here http://github.com/arracadas/shinygrads
+
+---
+
+## Graduates by Country Overtime
+
+The first graph is a GoogleVis motion chart showing Graduates vs. Young Adults by Country over time.  In most countries the total number of Young Adults has remained almost the same, but graduates have increased significantly in countries like Poland.
+
+```{r, echo=FALSE, results= "hide"} 
+y1 <- read.delim("./oecd_gradYA.txt"
+                 ,stringsAsFactors = FALSE
+                 ,na.strings = c("NA","")
+                 ,header = TRUE
+)
+y1$CountryCd <- factor(y1$CountryCd)
+y1$CountryName <- factor(y1$CountryName)
+```
+
+
+```{r, gv, results="asis"}
+suppressPackageStartupMessages(library(googleVis))
+yp <- gvisMotionChart(y1
+                      ,"CountryName"
+                      ,"Year"
+                      ,options=list(width=600
+                                    ,height=400
+                                    )
+                      )
+print(yp, "chart")
+```
+
+---
+## Graduates by Field of Study per 1000 Young Adults
+
+The second graph shows the number of graduates by country for every 1000 young adults. Here you can examine what are the most demanded fields of study and what countries have the highest proportion of graduates.
+
+```{r, echo=FALSE, results= "hide"} 
+fs1 <- read.delim("./oecd_gradFS.txt"
+                  ,stringsAsFactors = FALSE
+                  ,na.strings = c("NA","")
+                  ,header = TRUE
+)
+fs1$CountryCd <- factor(fs1$CountryCd)
+fs1$FieldEducation <- factor(fs1$FieldEducation)
+fs1$GraduatesProportion <- round(fs1$Graduates/fs1$YoungAdults, 5)*1000
+```
+
+```{r, p1, echo= FALSE, fig.widht = 12, fig.height=6, fig.align='center'}
+suppressPackageStartupMessages(library(ggplot2))
+gp <- qplot(x = CountryName
+            ,weight = GraduatesProportion
+            ,data = fs1
+            ,fill = FieldEducation
+            ,geom = "bar"
+            ,binwidth = 15
+            ,main = "Count of Graduates per 1000 Young Adults"
+            ,ylab = "Graduates"
+            ,xlab = ""
+            )
+gp <- gp + theme(axis.text.x = element_text(angle = 90
+                                            ,hjust = 1)) + scale_y_continuous("GraduatesProportion")
+    print(gp)
+```
+
+---
+## Highlights
+- In the trend graph we can see France graduates declining dramatically after 2009
+- In the graduates as proportion of 1000 Young Adults we can see that Poland has the highest number of graduates with a particular emphasis on Business and Administration and Computing Sciences.
+- Other countries might learn from Poland what are the most successful policies that promote growth in the number of graduates. The future lies in the education of our youth. 
